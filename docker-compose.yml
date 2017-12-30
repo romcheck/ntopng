@@ -1,0 +1,28 @@
+version: '2'
+
+volumes:
+  redis:
+
+services:
+
+  ntopng:
+    restart: "on-failure:5"
+    logging:
+      options:
+        max-size: "1m"
+    image: fzinfz/ntop
+    command: ["ntopng", "--redis", "127.0.0.1", "--interface", "eth0", "--http-port", "0", "--https-port", "3030"]
+    network_mode: host
+    depends_on:
+    - redis
+
+  redis:
+    restart: "on-failure:5"
+    logging:
+      options:
+        max-size: "1m"
+    image: redis:alpine
+    ports:
+    - 127.0.0.1:6379:6379
+    volumes:
+    - redis:/data
